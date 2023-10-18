@@ -1,0 +1,79 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Feedback</title>
+</head>
+<style>
+    * {
+        font-family: Arial, serif;
+    }
+
+    textarea {
+        width: 100%;
+        max-width: 800px;
+        height: 300px;
+    }
+
+    input {
+        width: 200px;
+    }
+
+    .input {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        margin-bottom: 0;
+    }
+
+    button {
+        font-size: 20px;
+    }
+
+    h2 {
+        color: green;
+    }
+</style>
+<body>
+<h1>Feedback</h1>
+<textarea id="feedback" class="input" placeholder="Dein Feedback" maxlength="499" oninput="validate()">
+</textarea>
+<br>
+<input id="name" class="input" placeholder="Dein Name (Optional)" maxlength="29">
+<br>
+<button id="submit-button" onclick="submit()">Absenden</button>
+<h2 id="thank-you" hidden="">Vielen Dank für dein Feedback!</h2>
+</body>
+<script>
+    const nameElement = document.getElementById("name");
+    const feedbackElement = document.getElementById("feedback");
+    const submitButton = document.getElementById("submit-button");
+
+    function validate() {
+        submitButton.disabled = feedbackElement.value.length === 0;
+    }
+
+    validate();
+
+    function submit() {
+        const body = JSON.stringify({
+            name: nameElement.value,
+            feedback: feedbackElement.value
+        });
+
+        fetch("https://analytics.pipeman.org/api/feedback", {
+            method: "POST",
+            body: body
+        }).then(() => {
+            document.getElementById("thank-you").hidden = false;
+        });
+
+        nameElement.value = "";
+        feedbackElement.value = "";
+    }
+</script>
+</html>
